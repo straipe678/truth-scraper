@@ -2,9 +2,12 @@ const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const rateLimit = require("express-rate-limit");
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(cors());
 
 // Rate limiter: 100 requests per IP per minute
 const limiter = rateLimit({
