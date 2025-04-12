@@ -1,5 +1,4 @@
 const express = require("express");
-import { NextResponse } from "next/server"
 import chromium from "chrome-aws-lambda"
 import puppeteer from "puppeteer-core"
 const rateLimit = require("express-rate-limit");
