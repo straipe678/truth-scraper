@@ -2,6 +2,7 @@ const express = require("express");
 const puppeteer = require("puppeteer-core");
 const rateLimit = require("express-rate-limit");
 const cors = require("cors");
+const chrome = require("chrome-aws-lambda");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,8 +32,14 @@ app.get("/api/trump-posts", async (req, res) => {
   }
 
   try {
-    // Launch Puppeteer
-    const browser = await puppeteer.launch();
+    // Launch Puppeteer with Chrome AWS Lambda settings
+    const browser = await puppeteer.launch({
+      executablePath: await chrome.executablePath,
+      headless: chrome.headless,
+      args: chrome.args,
+      defaultViewport: chrome.defaultViewport
+    });
+    
     const page = await browser.newPage();
     await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
 
