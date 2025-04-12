@@ -8,10 +8,7 @@
   "env": {
     "CHROME_BIN": "/tmp/chromium"
   },
-  "probes": [
-    {
-      "path": "/",
-      "probe": "/api/trump-posts"
-    }
+  "routes": [
+    { "src": "/api/(.*)", "dest": "index.js" }
   ]
 }
