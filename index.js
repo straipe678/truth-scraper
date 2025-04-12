@@ -1,8 +1,8 @@
 const express = require("express");
+const chromium = require("@sparticuz/chromium");
 const puppeteer = require("puppeteer-core");
 const rateLimit = require("express-rate-limit");
 const cors = require("cors");
-const chrome = require("chrome-aws-lambda");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,10 +34,11 @@ app.get("/api/trump-posts", async (req, res) => {
   try {
     // Launch Puppeteer with Chrome AWS Lambda settings
     const browser = await puppeteer.launch({
-      executablePath: await chrome.executablePath,
-      headless: chrome.headless,
-      args: chrome.args,
-      defaultViewport: chrome.defaultViewport
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
     });
     
     const page = await browser.newPage();
