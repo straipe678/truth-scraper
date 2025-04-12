@@ -1,6 +1,7 @@
 const express = require("express");
-const chromium = require("@sparticuz/chromium");
-const puppeteer = require("puppeteer-core");
+import { NextResponse } from "next/server"
+import chromium from "chrome-aws-lambda"
+import puppeteer from "puppeteer-core"
 const rateLimit = require("express-rate-limit");
 const cors = require("cors");
 
