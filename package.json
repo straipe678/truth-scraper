@@ -8,6 +8,7 @@
   },
 "dependencies": {
   "express": "^4.17.1",
+  "untruthr": "github:favstats/untruthr",
   "puppeteer-core": "10.1.0",
   "chrome-aws-lambda": "10.1.0",
   "express-rate-limit": "^5.3.0",
