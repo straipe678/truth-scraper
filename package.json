@@ -8,8 +8,8 @@
   },
 "dependencies": {
   "express": "^4.17.1",
-  "puppeteer-core": "^19.8.0",
-  "@sparticuz/chromium": "^112.0.5614.0",
+  "puppeteer-core": "^22.11.0",
+  "@sparticuz/chromium": "^123.0.0",
   "express-rate-limit": "^5.3.0",
   "cors": "^2.8.5"
 }
