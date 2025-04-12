@@ -1,9 +1,17 @@
 {
-  "version": 2,
   "builds": [
-    { "src": "index.js", "use": "@vercel/node" }
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
+    }
   ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "index.js" }
+  "env": {
+    "CHROME_BIN": "/tmp/chromium"
+  },
+  "probes": [
+    {
+      "path": "/",
+      "probe": "/api/trump-posts"
+    }
   ]
 }
