@@ -1,23 +1,22 @@
 const express = require("express");
-const axios = require("axios");
-const cheerio = require("cheerio");
+const puppeteer = require("puppeteer");
 const rateLimit = require("express-rate-limit");
 const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Enable CORS
 app.use(cors());
 
 // Rate limiter: 100 requests per IP per minute
 const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000, 
+  windowMs: 1 * 60 * 1000,
   max: 100
 });
-
 app.use(limiter);
 
-// In-memory cache to avoid hitting Truth Social on every request
+// 🧠 Simple in-memory cache
 let cache = {
   timestamp: 0,
   data: []
@@ -26,33 +25,40 @@ let cache = {
 app.get("/api/trump-posts", async (req, res) => {
   const now = Date.now();
 
-  // Serve from cache if it's still fresh
+  // If cache is fresh (10 mins)
   if (now - cache.timestamp < 10 * 60 * 1000) {
     return res.json(cache.data);
   }
 
   try {
-    const response = await axios.get("https://truthsocial.com/@realDonaldTrump", {
-      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
+    // Launch Puppeteer
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+
+    // Go to Truth Social page
+    await page.goto("https://truthsocial.com/@realDonaldTrump", { waitUntil: "domcontentloaded" });
+
+    // Wait for posts to load
+    await page.waitForSelector("div[data-testid='postContent']");
+
+    // Extract post content
+    const posts = await page.evaluate(() => {
+      const postElements = document.querySelectorAll("div[data-testid='postContent']");
+      return Array.from(postElements).map(post => post.innerText.trim());
     });
 
-    const $ = cheerio.load(response.data);
-    const posts = [];
+    await browser.close();
 
-    $("div[data-testid='postContent']").each((i, el) => {
-      const text = $(el).text().trim();
-      if (text) posts.push(text);
-    });
-
-    // Update the cache
+    // Update cache
     cache = {
       timestamp: now,
-      data: posts.slice(0, 5)
+      data: posts.slice(0, 5)  // Return the first 5 posts
     };
 
     res.json(cache.data);
   } catch (err) {
-    console.error("SCRAPE ERROR:", err.response?.status, err.message);
+    console.error("SCRAPE ERROR:", err);
     res.status(500).json({ error: "Failed to fetch content." });
   }
 });
