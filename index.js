@@ -33,7 +33,7 @@ app.get("/api/trump-posts", async (req, res) => {
 
   try {
     const response = await axios.get("https://truthsocial.com/@realDonaldTrump", {
-      headers: { "User-Agent": "Mozilla/5.0" }
+      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
     });
 
     const $ = cheerio.load(response.data);
@@ -52,7 +52,7 @@ app.get("/api/trump-posts", async (req, res) => {
 
     res.json(cache.data);
   } catch (err) {
-    console.error("Error fetching posts:", err.message);
+    console.error("SCRAPE ERROR:", err.response?.status, err.message);
     res.status(500).json({ error: "Failed to fetch content." });
   }
 });
